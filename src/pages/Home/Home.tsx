@@ -3,44 +3,58 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Divider, Tab, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
-import { useMemo, useState } from "react";
+import { useState } from "react";
+import { useFormik, Formik, Form, useField, useFormikContext } from "formik";
+import { InstantTextField } from "@/components/formik-mui";
+import { checkMaskedNRIC, checkName } from "./validations";
 
-function ReportSickForm() {
+function ReportSickFormatGenerator() {
+  const [tabFormValue, setTabFormValue] = useState<"report-sick" | "outcome">("report-sick");
+
   return (
-    <Grid container>
-      <Grid sm={12}>
-        <Typography variant="h5">Personal Particulars</Typography>
-        <Divider />
+    <Formik
+      initialValues={{ name: "", nric: "" }}
+      onSubmit={() => {
+        // Does nothing, no submit for this
+      }}
+    >
+      <Grid container sx={{ mx: { sm: 0, lg: 2 } }} spacing={1}>
+        <Grid xs={12} sx={{ my: 2 }}>
+          <Typography variant="h5">Personal Particulars</Typography>
+          <Divider />
+        </Grid>
+        <Grid xs={12} lg={3}></Grid>
+        <Grid xs={12} lg={6}>
+          <InstantTextField name="name" checkErr={checkName} label="Name" fullWidth={true} />
+        </Grid>
+        <Grid xs={12} lg={3}>
+          <InstantTextField
+            name="nric"
+            checkErr={checkMaskedNRIC}
+            label="Masked NRIC"
+            fullWidth={true}
+          />
+        </Grid>
+        <Grid xs={12}>
+          <TabContext value={tabFormValue}>
+            <TabList
+              onChange={(_, value) => {
+                setTabFormValue(value);
+              }}
+            >
+              <Tab label="Report Sick" value="report-sick" />
+              <Tab label="Outcome" value="outcome" />
+            </TabList>
+            <TabPanel value="report-sick"></TabPanel>
+            <TabPanel value="outcome"></TabPanel>
+          </TabContext>
+        </Grid>
       </Grid>
-    </Grid>
+    </Formik>
   );
 }
 
-function OutcomeForm() {
-  return null;
-}
-
-declare interface FormTabPanelProps {
-  children?: React.ReactNode;
-  value: string;
-}
-
-function FormTabPanel({ children, value }: FormTabPanelProps) {
-  const theme = useTheme();
-  const matches = useMediaQuery(theme.breakpoints.down("sm"));
-  if (matches) {
-    return (
-      <TabPanel value={value} sx={{ px: 0 }}>
-        {children}
-      </TabPanel>
-    );
-  }
-  return <TabPanel value={value}>{children}</TabPanel>;
-}
-
 export default function Home() {
-  const [tabFormValue, setTabFormValue] = useState<"report-sick" | "outcome">("report-sick");
-
   return (
     <DefaultLayout>
       <Grid container sx={{ my: 2 }}>
@@ -50,26 +64,7 @@ export default function Home() {
           </Typography>
         </Grid>
       </Grid>
-      <Grid container>
-        <Grid xs={12}>
-          <TabContext value={tabFormValue}>
-            <Box sx={{ mx: { sm: 0, md: 2 } }}>
-              <TabList
-                onChange={(_, value) => {
-                  setTabFormValue(value);
-                }}
-              >
-                <Tab label="Report Sick" value="report-sick" />
-                <Tab label="Outcome" value="outcome" />
-              </TabList>
-              <FormTabPanel value="report-sick">
-                <ReportSickForm />
-              </FormTabPanel>
-              <FormTabPanel value="outcome">Hello</FormTabPanel>
-            </Box>
-          </TabContext>
-        </Grid>
-      </Grid>
+      <ReportSickFormatGenerator />
     </DefaultLayout>
   );
 }
