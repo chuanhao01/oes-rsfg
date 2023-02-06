@@ -12,8 +12,13 @@ export function checkName(name: string): simpleErrorT {
 }
 
 export function checkMaskedNRIC(maskedNRIC: string): simpleErrorT {
+  const maskedNRICRegex = /^[SFTG]XXXX\d{3}[A-Z]$/;
+
   if (!maskedNRIC) {
     return "Required";
+  }
+  if (!maskedNRICRegex.test(maskedNRIC)) {
+    return "Your NRIC is in the wrong format";
   }
   return null;
 }
