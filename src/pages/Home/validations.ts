@@ -1,17 +1,16 @@
-import { simpleErrorT } from "@/components/formik-mui";
+import { FieldValidator } from "formik";
 
 // Validations for Report Sick Format Generator
-export function checkName(name: string): simpleErrorT {
+export const checkName: FieldValidator = (name: string) => {
   if (!name) {
     return "Required";
   }
   if (name.length < 1) {
     return "Name needs to be longer than 1 character";
   }
-  return null;
-}
+};
 
-export function checkMaskedNRIC(maskedNRIC: string): simpleErrorT {
+export const checkMaskedNRIC: FieldValidator = (maskedNRIC: string) => {
   const maskedNRICRegex = /^[SFTG]XXXX\d{3}[A-Z]$/;
 
   if (!maskedNRIC) {
@@ -20,5 +19,4 @@ export function checkMaskedNRIC(maskedNRIC: string): simpleErrorT {
   if (!maskedNRICRegex.test(maskedNRIC)) {
     return "Your NRIC is in the wrong format";
   }
-  return null;
-}
+};

@@ -1,30 +1,39 @@
 import { TextFieldProps, FormHelperText, TextField } from "@mui/material";
-import { useField } from "formik";
-import { simpleErrorT } from "./utils";
+import { useField, FieldValidator } from "formik";
 
 export type InstantTextFieldProps =
   | {
       name: string;
       helperText?: string;
-      checkErr: (name: string) => simpleErrorT;
+      validate?: FieldValidator;
     } & TextFieldProps;
 
-export function InstantTextField({ name, helperText, checkErr, ...props }: InstantTextFieldProps) {
-  const [field, meta] = useField(name);
+export function InstantTextField({
+  name,
+  validate,
+  helperText,
+  variant,
+  ...props
+}: InstantTextFieldProps) {
+  const [field, meta] = useField({ name, validate });
 
   let configTextField = {
     error: false,
     helperText: "",
   };
 
-  const errMsg = checkErr(field.value);
-  if (meta && meta.touched && errMsg) {
-    configTextField = { ...configTextField, error: true, helperText: errMsg };
+  if (meta && meta.touched && meta.error) {
+    configTextField = {
+      ...configTextField,
+      error: true,
+      helperText: meta.error,
+    };
   }
   return (
-    <TextField variant="outlined" {...field} {...props} {...configTextField}>
-      {helperText && <FormHelperText>{helperText}</FormHelperText>}
-    </TextField>
+    <>
+      <TextField variant={variant || "outlined"} {...field} {...props} {...configTextField} />
+      {helperText && <FormHelperText sx={{ mx: 1 }}>{helperText}</FormHelperText>}
+    </>
   );
 }
 

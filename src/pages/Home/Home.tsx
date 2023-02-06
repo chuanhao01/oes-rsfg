@@ -33,7 +33,7 @@ function ReportSickFormatGenerator() {
 
   return (
     <Formik
-      initialValues={{ name: "", nric: "" }}
+      initialValues={{ rank: "", name: "", nric: "" }}
       onSubmit={() => {
         // Does nothing, no submit for this
       }}
@@ -45,14 +45,15 @@ function ReportSickFormatGenerator() {
         </Grid>
         <Grid xs={12} lg={3}></Grid>
         <Grid xs={12} lg={6}>
-          <InstantTextField name="name" checkErr={checkName} label="Name" fullWidth={true} />
+          <InstantTextField name="name" validate={checkName} label="Name" fullWidth={true} />
         </Grid>
         <Grid xs={12} lg={3}>
           <InstantTextField
             name="nric"
-            checkErr={checkMaskedNRIC}
+            validate={checkMaskedNRIC}
             label="Masked NRIC"
             fullWidth={true}
+            helperText={"In the format of TXXXX123A"}
           />
         </Grid>
         <Grid xs={12}>
