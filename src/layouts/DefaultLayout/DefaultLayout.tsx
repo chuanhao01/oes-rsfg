@@ -15,7 +15,7 @@ import { ColorModeContext } from "@/App";
 import { useTheme } from "@mui/material/styles";
 import { Avatar } from "@mui/material";
 
-export declare interface DefaultLayoutProps {
+export interface DefaultLayoutProps {
   children?: React.ReactNode;
 }
 
