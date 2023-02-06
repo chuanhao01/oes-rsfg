@@ -1,4 +1,5 @@
 import { FieldValidator } from "formik";
+import { matchIsValidTel } from "mui-tel-input";
 
 // Validations for Report Sick Format Generator
 export const checkRank: FieldValidator = (rank: string) => {
@@ -27,5 +28,14 @@ export const checkMaskedNRIC: FieldValidator = (maskedNRIC: string) => {
   }
   if (!maskedNRICRegex.test(maskedNRIC)) {
     return "Your NRIC is in the wrong format";
+  }
+};
+
+export const checkContactNumber: FieldValidator = (contactNumber: string) => {
+  if (!contactNumber) {
+    return "Required";
+  }
+  if (!matchIsValidTel(contactNumber)) {
+    return "Please input a valid phone number";
   }
 };

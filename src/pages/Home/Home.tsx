@@ -6,8 +6,9 @@ import { Box } from "@mui/system";
 import { useState } from "react";
 import { useFormik, Formik, Form, useField, useFormikContext } from "formik";
 import { TextField } from "@/components/formik-mui";
-import { checkMaskedNRIC, checkName, checkRank } from "./validations";
+import { checkContactNumber, checkMaskedNRIC, checkName, checkRank } from "./validations";
 import { armyRanks } from "@/constants";
+import TelInputField from "@/components/formik-mui/TelInputField";
 
 function ReportSickFormatGenerator() {
   const selectRankValues = [
@@ -33,7 +34,7 @@ function ReportSickFormatGenerator() {
 
   return (
     <Formik
-      initialValues={{ rank: "", name: "", nric: "" }}
+      initialValues={{ rank: "", name: "", nric: "", contactNumber: "+65" }}
       onSubmit={() => {
         // Does nothing, no submit for this
       }}
@@ -44,7 +45,7 @@ function ReportSickFormatGenerator() {
           <Divider />
         </Grid>
         <Grid xs={12} lg={3}>
-          <TextField select name="rank" validate={checkRank} label="Rank" fullWidth={true}>
+          <TextField select required name="rank" validate={checkRank} label="Rank" fullWidth={true}>
             {selectRankValues.map((rank) => (
               <MenuItem key={rank.value} value={rank.value}>
                 {rank.label}
@@ -53,15 +54,24 @@ function ReportSickFormatGenerator() {
           </TextField>
         </Grid>
         <Grid xs={12} lg={6}>
-          <TextField name="name" validate={checkName} label="Name" fullWidth={true} />
+          <TextField required name="name" validate={checkName} label="Name" fullWidth={true} />
         </Grid>
         <Grid xs={12} lg={3}>
           <TextField
+            required
             name="nric"
             validate={checkMaskedNRIC}
             label="Masked NRIC"
             fullWidth={true}
             helperText={"In the format of TXXXX123A"}
+          />
+        </Grid>
+        <Grid xs={12} lg={6}>
+          <TelInputField
+            required
+            name="contactNumber"
+            validate={checkContactNumber}
+            fullWidth={true}
           />
         </Grid>
         <Grid xs={12}>
