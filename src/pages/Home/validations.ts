@@ -1,6 +1,15 @@
 import { FieldValidator } from "formik";
 
 // Validations for Report Sick Format Generator
+export const checkRank: FieldValidator = (rank: string) => {
+  if (!rank) {
+    return "Required";
+  }
+  if (rank == "") {
+    return "Please pick a rank";
+  }
+};
+
 export const checkName: FieldValidator = (name: string) => {
   if (!name) {
     return "Required";

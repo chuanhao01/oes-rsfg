@@ -1,4 +1,4 @@
-import { TextFieldProps, FormHelperText, TextField } from "@mui/material";
+import { TextFieldProps, FormHelperText, TextField as MuiTextField } from "@mui/material";
 import { useField, FieldValidator } from "formik";
 
 export type InstantTextFieldProps =
@@ -8,11 +8,12 @@ export type InstantTextFieldProps =
       validate?: FieldValidator;
     } & TextFieldProps;
 
-export function InstantTextField({
+export function TextField({
   name,
   validate,
   helperText,
   variant,
+  children,
   ...props
 }: InstantTextFieldProps) {
   const [field, meta] = useField({ name, validate });
@@ -31,10 +32,12 @@ export function InstantTextField({
   }
   return (
     <>
-      <TextField variant={variant || "outlined"} {...field} {...props} {...configTextField} />
+      <MuiTextField variant={variant || "outlined"} {...field} {...props} {...configTextField}>
+        {children}
+      </MuiTextField>
       {helperText && <FormHelperText sx={{ mx: 1 }}>{helperText}</FormHelperText>}
     </>
   );
 }
 
-export default InstantTextField;
+export default TextField;

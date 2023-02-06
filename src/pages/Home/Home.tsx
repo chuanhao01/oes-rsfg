@@ -1,12 +1,12 @@
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Divider, Tab, Typography, useMediaQuery, useTheme } from "@mui/material";
+import { Divider, MenuItem, Tab, Typography, useMediaQuery, useTheme } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import { useFormik, Formik, Form, useField, useFormikContext } from "formik";
-import { InstantTextField } from "@/components/formik-mui";
-import { checkMaskedNRIC, checkName } from "./validations";
+import { TextField } from "@/components/formik-mui";
+import { checkMaskedNRIC, checkName, checkRank } from "./validations";
 import { armyRanks } from "@/constants";
 
 function ReportSickFormatGenerator() {
@@ -43,12 +43,20 @@ function ReportSickFormatGenerator() {
           <Typography variant="h5">Personal Particulars</Typography>
           <Divider />
         </Grid>
-        <Grid xs={12} lg={3}></Grid>
+        <Grid xs={12} lg={3}>
+          <TextField select name="rank" validate={checkRank} label="Rank" fullWidth={true}>
+            {selectRankValues.map((rank) => (
+              <MenuItem key={rank.value} value={rank.value}>
+                {rank.label}
+              </MenuItem>
+            ))}
+          </TextField>
+        </Grid>
         <Grid xs={12} lg={6}>
-          <InstantTextField name="name" validate={checkName} label="Name" fullWidth={true} />
+          <TextField name="name" validate={checkName} label="Name" fullWidth={true} />
         </Grid>
         <Grid xs={12} lg={3}>
-          <InstantTextField
+          <TextField
             name="nric"
             validate={checkMaskedNRIC}
             label="Masked NRIC"
