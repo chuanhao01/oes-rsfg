@@ -35,6 +35,7 @@
     "@mui/lab": "^5.0.0-alpha.118",
     "@mui/material": "^5.11.6",
     "formik": "^2.2.9",
+    "mui-tel-input": "^3.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-helmet": "^6.1.0",
