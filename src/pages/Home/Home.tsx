@@ -7,8 +7,28 @@ import { useState } from "react";
 import { useFormik, Formik, Form, useField, useFormikContext } from "formik";
 import { InstantTextField } from "@/components/formik-mui";
 import { checkMaskedNRIC, checkName } from "./validations";
+import { armyRanks } from "@/constants";
 
 function ReportSickFormatGenerator() {
+  const selectRankValues = [
+    { value: "", label: "" },
+    ...[
+      armyRanks.REC,
+      armyRanks.PTE,
+      armyRanks.LCP,
+      armyRanks.CPL,
+      armyRanks.CFC,
+      armyRanks._3SG,
+      armyRanks.ME1T,
+      armyRanks.ME1,
+      armyRanks.ME2,
+      armyRanks.ME3,
+    ].map((armyRank) => ({
+      value: armyRank.abbreviation,
+      label: `${armyRank.word} (${armyRank.abbreviation})`,
+    })),
+  ];
+
   const [tabFormValue, setTabFormValue] = useState<"report-sick" | "outcome">("report-sick");
 
   return (
