@@ -1,1 +1,1 @@
-export * from "./InstantTextField";
+export * from "./TextField";
