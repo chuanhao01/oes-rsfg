@@ -36,7 +36,16 @@ export function TextField({
   }
   return (
     <>
-      <MuiTextField variant={variant || "outlined"} {...field} {...props} {...configTextField}>
+      <MuiTextField
+        variant={variant || "outlined"}
+        {...props}
+        {...configTextField}
+        // Attaching formik methods
+        name={name}
+        value={field.value}
+        onChange={field.value}
+        onBlur={field.onBlur}
+      >
         {children}
       </MuiTextField>
       {helperText && <FormHelperText sx={{ mx: 1 }}>{helperText}</FormHelperText>}
