@@ -1,16 +1,33 @@
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Divider, MenuItem, Tab, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Divider,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  Tab,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
 import { useState } from "react";
 import { useFormik, Formik, Form, useField, useFormikContext } from "formik";
 import { TextField } from "@/components/formik-mui";
-import { checkContactNumber, checkMaskedNRIC, checkName, checkRank } from "./validations";
+import {
+  checkContactNumber,
+  checkMaskedNRIC,
+  checkName,
+  checkPlatform,
+  checkRank,
+} from "./validations";
 import { armyRanks } from "@/constants";
-import TelInputField from "@/components/formik-mui/TelInputField";
+import { TelInputField } from "@/components/formik-mui/TelInputField";
+import { RadioGroup } from "@/components/formik-mui/RadioGroup";
 
 function ReportSickFormatGenerator() {
+  const reportSickOptions = ["RSI", "RSO", "MA"];
   const selectRankValues = [
     { value: "", label: "" },
     ...[
@@ -34,13 +51,20 @@ function ReportSickFormatGenerator() {
 
   return (
     <Formik
-      initialValues={{ rank: "", name: "", nric: "", contactNumber: "+65" }}
+      initialValues={{
+        rank: "",
+        name: "",
+        nric: "",
+        contactNumber: "+65",
+        platform: "",
+        reportSickType: "RSI",
+      }}
       onSubmit={() => {
         // Does nothing, no submit for this
       }}
     >
       <Grid container sx={{ mx: { sm: 0, lg: 2 } }} spacing={1}>
-        <Grid xs={12} sx={{ my: 2 }}>
+        <Grid xs={12}>
           <Typography variant="h5">Personal Particulars</Typography>
           <Divider />
         </Grid>
@@ -74,6 +98,15 @@ function ReportSickFormatGenerator() {
             fullWidth={true}
           />
         </Grid>
+        <Grid xs={12} lg={6}>
+          <TextField
+            required
+            name="platform"
+            validate={checkPlatform}
+            label="Platform"
+            fullWidth={true}
+          />
+        </Grid>
         <Grid xs={12}>
           <TabContext value={tabFormValue}>
             <TabList
@@ -84,7 +117,26 @@ function ReportSickFormatGenerator() {
               <Tab label="Report Sick" value="report-sick" />
               <Tab label="Outcome" value="outcome" />
             </TabList>
-            <TabPanel value="report-sick"></TabPanel>
+            <TabPanel value="report-sick">
+              <Grid container spacing={1}>
+                <Grid xs={12}>
+                  <Typography variant="h5">Incident Details</Typography>
+                  <Divider />
+                </Grid>
+                <Grid xs={12}>
+                  <RadioGroup name="reportSickType" required={true} formLabel="You are going to:">
+                    {reportSickOptions.map((option) => (
+                      <FormControlLabel
+                        key={option}
+                        value={option}
+                        control={<Radio />}
+                        label={option}
+                      />
+                    ))}
+                  </RadioGroup>
+                </Grid>
+              </Grid>
+            </TabPanel>
             <TabPanel value="outcome"></TabPanel>
           </TabContext>
         </Grid>

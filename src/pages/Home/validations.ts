@@ -15,9 +15,6 @@ export const checkName: FieldValidator = (name: string) => {
   if (!name) {
     return "Required";
   }
-  if (name.length < 1) {
-    return "Name needs to be longer than 1 character";
-  }
 };
 
 export const checkMaskedNRIC: FieldValidator = (maskedNRIC: string) => {
@@ -37,5 +34,11 @@ export const checkContactNumber: FieldValidator = (contactNumber: string) => {
   }
   if (!matchIsValidTel(contactNumber)) {
     return "Please input a valid phone number";
+  }
+};
+
+export const checkPlatform: FieldValidator = (platform: string) => {
+  if (!platform) {
+    return "Required";
   }
 };
