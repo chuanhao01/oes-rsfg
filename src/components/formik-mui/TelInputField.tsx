@@ -13,7 +13,7 @@ export function TelInputField({
   preferredCountries,
   ...props
 }: TelInputFieldProps) {
-  const [field, meta] = useField({ name, validate });
+  const [field, meta, helper] = useField({ name, validate });
 
   let configTextField = {
     error: false,
@@ -31,9 +31,14 @@ export function TelInputField({
   return (
     <MuiTelInput
       preferredCountries={preferredCountries || ["SG", "MY"]}
-      {...field}
       {...props}
       {...configTextField}
+      name={name}
+      value={field.value}
+      onChange={(telValue) => {
+        helper.setValue(telValue);
+      }}
+      onBlur={field.onBlur}
     />
   );
 }
