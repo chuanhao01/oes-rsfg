@@ -43,7 +43,7 @@ export function TextField({
         // Attaching formik methods
         name={name}
         value={field.value}
-        onChange={field.value}
+        onChange={field.onChange}
         onBlur={field.onBlur}
       >
         {children}
