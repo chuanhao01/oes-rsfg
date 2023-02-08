@@ -1,22 +1,13 @@
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import {
-  Divider,
-  FormControlLabel,
-  MenuItem,
-  Radio,
-  Tab,
-  Typography,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import { Box } from "@mui/system";
-import { useState } from "react";
-import { useFormik, Formik, Form, useField, useFormikContext } from "formik";
-import { TextField } from "@/components/formik-mui";
+import { useEffect, useState } from "react";
+import { Formik, useField, useFormikContext } from "formik";
+import { TextField, TextFieldProps } from "@/components/formik-mui";
 import {
   checkContactNumber,
+  checkLocation,
   checkMaskedNRIC,
   checkName,
   checkPlatform,
@@ -26,8 +17,86 @@ import { armyRanks } from "@/constants";
 import { TelInputField } from "@/components/formik-mui/TelInputField";
 import { RadioGroup } from "@/components/formik-mui/RadioGroup";
 
-function ReportSickFormatGenerator() {
-  const reportSickOptions = ["RSI", "RSO", "MA"];
+const reportSickOptions = { RSI: "RSI", RSO: "RSO", MA: "MA" };
+
+interface FormatGeneratorFieldsI {
+  rank: string;
+  name: string;
+  nric: string;
+  contactNumber: string;
+  platform: string;
+  reportSickType: string;
+  location: string;
+}
+type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
+
+function ReportSickLocationField({
+  name,
+  validate,
+  defaultLocation,
+  ...props
+}: ReportSickLocationFieldProps) {
+  const [customLocation, setCustomLocation] = useState("");
+
+  const { values } = useFormikContext<FormatGeneratorFieldsI>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [field, _, helper] = useField({ name, validate });
+
+  useEffect(() => {
+    if (values.reportSickType === reportSickOptions.RSI) {
+      helper.setValue(defaultLocation);
+    } else {
+      helper.setValue(customLocation);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.reportSickType]);
+
+  return (
+    <TextField
+      name={name}
+      disabled={values.reportSickType === reportSickOptions.RSI}
+      onChange={(e) => {
+        if (values.reportSickType !== reportSickOptions.RSI) {
+          setCustomLocation(e.target.value);
+        }
+        field.onChange(e);
+      }}
+      {...props}
+    />
+  );
+}
+
+function ReportSickTab() {
+  const reportSickTypes = [reportSickOptions.RSI, reportSickOptions.RSO, reportSickOptions.MA];
+
+  return (
+    <Grid container spacing={1}>
+      <Grid xs={12}>
+        <Typography variant="h5">Incident Details</Typography>
+        <Divider />
+      </Grid>
+      <Grid xs={12}>
+        <RadioGroup name="reportSickType" required={true} formLabel="You are going to:">
+          {reportSickTypes.map((option) => (
+            <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
+          ))}
+        </RadioGroup>
+      </Grid>
+      <Grid xs={12}>
+        <ReportSickLocationField
+          required
+          label="Location"
+          fullWidth={true}
+          name="location"
+          defaultLocation="KRHH"
+          validate={checkLocation}
+        />
+      </Grid>
+    </Grid>
+  );
+}
+
+function FormatGenerator() {
   const selectRankValues = [
     { value: "", label: "" },
     ...[
@@ -49,16 +118,19 @@ function ReportSickFormatGenerator() {
 
   const [tabFormValue, setTabFormValue] = useState<"report-sick" | "outcome">("report-sick");
 
+  const formatGeneratorFieldsInitalValues: FormatGeneratorFieldsI = {
+    rank: "",
+    name: "",
+    nric: "",
+    contactNumber: "+65",
+    platform: "",
+    reportSickType: reportSickOptions.RSI,
+    location: "",
+  };
+
   return (
     <Formik
-      initialValues={{
-        rank: "",
-        name: "",
-        nric: "",
-        contactNumber: "+65",
-        platform: "",
-        reportSickType: "RSI",
-      }}
+      initialValues={formatGeneratorFieldsInitalValues}
       onSubmit={() => {
         // Does nothing, no submit for this
       }}
@@ -118,24 +190,7 @@ function ReportSickFormatGenerator() {
               <Tab label="Outcome" value="outcome" />
             </TabList>
             <TabPanel value="report-sick">
-              <Grid container spacing={1}>
-                <Grid xs={12}>
-                  <Typography variant="h5">Incident Details</Typography>
-                  <Divider />
-                </Grid>
-                <Grid xs={12}>
-                  <RadioGroup name="reportSickType" required={true} formLabel="You are going to:">
-                    {reportSickOptions.map((option) => (
-                      <FormControlLabel
-                        key={option}
-                        value={option}
-                        control={<Radio />}
-                        label={option}
-                      />
-                    ))}
-                  </RadioGroup>
-                </Grid>
-              </Grid>
+              <ReportSickTab />
             </TabPanel>
             <TabPanel value="outcome"></TabPanel>
           </TabContext>
@@ -155,7 +210,7 @@ export default function Home() {
           </Typography>
         </Grid>
       </Grid>
-      <ReportSickFormatGenerator />
+      <FormatGenerator />
     </DefaultLayout>
   );
 }

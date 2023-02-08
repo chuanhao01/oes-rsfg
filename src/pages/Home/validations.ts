@@ -6,7 +6,7 @@ export const checkRank: FieldValidator = (rank: string) => {
   if (!rank) {
     return "Required";
   }
-  if (rank == "") {
+  if (rank === "") {
     return "Please pick a rank";
   }
 };
@@ -39,6 +39,12 @@ export const checkContactNumber: FieldValidator = (contactNumber: string) => {
 
 export const checkPlatform: FieldValidator = (platform: string) => {
   if (!platform) {
+    return "Required";
+  }
+};
+
+export const checkLocation: FieldValidator = (location: string) => {
+  if (!location) {
     return "Required";
   }
 };
