@@ -38,13 +38,13 @@ export function TextField({
     <>
       <MuiTextField
         variant={variant || "outlined"}
-        {...props}
         {...configTextField}
         // Attaching formik methods
         name={name}
         value={field.value}
         onChange={field.onChange}
         onBlur={field.onBlur}
+        {...props}
       >
         {children}
       </MuiTextField>
