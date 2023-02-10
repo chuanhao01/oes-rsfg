@@ -16,6 +16,9 @@ import {
 import { armyRanks } from "@/constants";
 import { TelInputField } from "@/components/formik-mui/TelInputField";
 import { RadioGroup } from "@/components/formik-mui/RadioGroup";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 
 const reportSickOptions = { RSI: "RSI", RSO: "RSO", MA: "MA" };
 
@@ -82,7 +85,7 @@ function ReportSickTab() {
           ))}
         </RadioGroup>
       </Grid>
-      <Grid xs={12}>
+      <Grid xs={12} lg={6}>
         <ReportSickLocationField
           required
           label="Location"
@@ -91,6 +94,11 @@ function ReportSickTab() {
           defaultLocation="KRHH"
           validate={checkLocation}
         />
+      </Grid>
+      <Grid xs={12} lg={6}>
+        <LocalizationProvider dateAdapter={AdapterMoment}>
+          {/* TODO: Stopped at adding in dateTimer Picker */}
+        </LocalizationProvider>
       </Grid>
     </Grid>
   );
