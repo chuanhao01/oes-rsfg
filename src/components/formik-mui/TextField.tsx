@@ -48,7 +48,11 @@ export function TextField({
       >
         {children}
       </MuiTextField>
-      {helperText && <FormHelperText sx={{ mx: 1 }}>{helperText}</FormHelperText>}
+      {helperText &&
+        helperText
+          .split("\n")
+          // eslint-disable-next-line react/jsx-key
+          .map((line) => <FormHelperText sx={{ mx: 1 }}>{line}</FormHelperText>)}
     </>
   );
 }

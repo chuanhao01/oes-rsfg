@@ -12,6 +12,7 @@ import {
   checkName,
   checkPlatform,
   checkRank,
+  checkReason,
 } from "./validations";
 import { armyRanks } from "@/constants";
 import { TelInputField } from "@/components/formik-mui/TelInputField";
@@ -33,6 +34,7 @@ interface FormatGeneratorFieldsI {
   reportSickType: string;
   location: string;
   dateTime: Moment;
+  reason: string;
 }
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
 
@@ -91,8 +93,8 @@ function ReportSickTab() {
       <Grid xs={12} lg={6}>
         <ReportSickLocationField
           required
+          fullWidth
           label="Location"
-          fullWidth={true}
           name="location"
           defaultLocation="KRHH"
           validate={checkLocation}
@@ -108,6 +110,20 @@ function ReportSickTab() {
             inputFormat="DD/MM/YYYY HH:mm"
           />
         </LocalizationProvider>
+      </Grid>
+      <Grid xs={12}>
+        <TextField
+          required
+          fullWidth
+          name="reason"
+          label="Reason"
+          helperText={`
+          If you are reporting sick for fever, include the temperature as well (Example: Fever of 38.2)
+          Note that flu is not a symptom.
+          If you are going for your MA, state the condition which you are consulting the doctor about.
+          `.trim()}
+          validate={checkReason}
+        />
       </Grid>
     </Grid>
   );
@@ -144,6 +160,7 @@ function FormatGenerator() {
     reportSickType: reportSickOptions.RSI,
     location: "",
     dateTime: moment().tz("Asia/Singapore"),
+    reason: "",
   };
 
   return (
@@ -159,7 +176,7 @@ function FormatGenerator() {
           <Divider />
         </Grid>
         <Grid xs={12} lg={3}>
-          <TextField select required name="rank" validate={checkRank} label="Rank" fullWidth={true}>
+          <TextField select required fullWidth name="rank" validate={checkRank} label="Rank">
             {selectRankValues.map((rank) => (
               <MenuItem key={rank.value} value={rank.value}>
                 {rank.label}
@@ -168,34 +185,23 @@ function FormatGenerator() {
           </TextField>
         </Grid>
         <Grid xs={12} lg={6}>
-          <TextField required name="name" validate={checkName} label="Name" fullWidth={true} />
+          <TextField required fullWidth name="name" validate={checkName} label="Name" />
         </Grid>
         <Grid xs={12} lg={3}>
           <TextField
             required
+            fullWidth
             name="nric"
             validate={checkMaskedNRIC}
             label="Masked NRIC"
-            fullWidth={true}
             helperText={"In the format of TXXXX123A"}
           />
         </Grid>
         <Grid xs={12} lg={6}>
-          <TelInputField
-            required
-            name="contactNumber"
-            validate={checkContactNumber}
-            fullWidth={true}
-          />
+          <TelInputField required fullWidth name="contactNumber" validate={checkContactNumber} />
         </Grid>
         <Grid xs={12} lg={6}>
-          <TextField
-            required
-            name="platform"
-            validate={checkPlatform}
-            label="Platform"
-            fullWidth={true}
-          />
+          <TextField required fullWidth name="platform" validate={checkPlatform} label="Platform" />
         </Grid>
         <Grid xs={12}>
           <TabContext value={tabFormValue}>

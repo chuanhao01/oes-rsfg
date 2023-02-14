@@ -48,3 +48,9 @@ export const checkLocation: FieldValidator = (location: string) => {
     return "Required";
   }
 };
+
+export const checkReason: FieldValidator = (reason: string) => {
+  if (!reason) {
+    return "Required";
+  }
+};
