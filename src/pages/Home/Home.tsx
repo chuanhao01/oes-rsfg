@@ -17,8 +17,10 @@ import { armyRanks } from "@/constants";
 import { TelInputField } from "@/components/formik-mui/TelInputField";
 import { RadioGroup } from "@/components/formik-mui/RadioGroup";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateTimePicker } from "@mui/x-date-pickers/DateTimePicker";
+import { DateTimePicker } from "@/components/formik-mui/DateTimePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { Moment } from "moment";
+import moment from "moment-timezone";
 
 const reportSickOptions = { RSI: "RSI", RSO: "RSO", MA: "MA" };
 
@@ -30,6 +32,7 @@ interface FormatGeneratorFieldsI {
   platform: string;
   reportSickType: string;
   location: string;
+  dateTime: Moment;
 }
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
 
@@ -97,7 +100,13 @@ function ReportSickTab() {
       </Grid>
       <Grid xs={12} lg={6}>
         <LocalizationProvider dateAdapter={AdapterMoment}>
-          {/* TODO: Stopped at adding in dateTimer Picker */}
+          <DateTimePicker
+            label="Date and Time"
+            name="dateTime"
+            ampm={false}
+            inputProps={{ fullWidth: true }}
+            inputFormat="DD/MM/YYYY HH:mm"
+          />
         </LocalizationProvider>
       </Grid>
     </Grid>
@@ -134,6 +143,7 @@ function FormatGenerator() {
     platform: "",
     reportSickType: reportSickOptions.RSI,
     location: "",
+    dateTime: moment().tz("Asia/Singapore"),
   };
 
   return (
