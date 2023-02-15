@@ -37,7 +37,7 @@ interface FormatGeneratorFieldsI {
   reason: string;
   obtainMedication: boolean;
   obtainMC: boolean;
-  statuses: { status: string; days: number };
+  statuses: { status: string; days: number; startDate: Moment }[];
 }
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
 
@@ -163,9 +163,29 @@ function OutcomeTab() {
           <FormControlLabel value={false} control={<Radio />} label="no" />
         </RadioGroup>
       </Grid>
-      <Grid xs={12}></Grid>
+      <Grid xs={12}>{/* <FieldArray name=""></FieldArray> */}</Grid>
     </Grid>
   );
+}
+
+function PersistValues() {
+  const { values, setValues } = useFormikContext<FormatGeneratorFieldsI>();
+  const kk = "formatGenerator";
+
+  useEffect(() => {
+    let savedValues = window.localStorage.getItem(kk);
+    if (savedValues) {
+      savedValues = JSON.parse(savedValues);
+      setValues(savedValues);
+    }
+  }, []);
+
+  useEffect(() => {
+    const saveValues = JSON.stringify(values);
+    window.localStorage.setItem(kk, saveValues);
+  }, [values]);
+
+  return null;
 }
 
 function FormatGenerator() {
@@ -202,6 +222,7 @@ function FormatGenerator() {
     reason: "",
     obtainMedication: false,
     obtainMC: false,
+    statuses: [],
   };
 
   return (
@@ -262,6 +283,7 @@ function FormatGenerator() {
             </TabPanel>
           </TabContext>
         </Grid>
+        <PersistValues />
       </Grid>
     </Formik>
   );
