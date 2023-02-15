@@ -3,7 +3,7 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { useEffect, useState } from "react";
-import { Formik, useField, useFormikContext } from "formik";
+import { FieldArray, Formik, useField, useFormikContext } from "formik";
 import { TextField, TextFieldProps } from "@/components/formik-mui";
 import {
   checkContactNumber,
@@ -35,6 +35,9 @@ interface FormatGeneratorFieldsI {
   location: string;
   dateTime: Moment;
   reason: string;
+  obtainMedication: boolean;
+  obtainMC: boolean;
+  statuses: { status: string; days: number };
 }
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
 
@@ -80,11 +83,12 @@ function ReportSickTab() {
   return (
     <Grid container spacing={1}>
       <Grid xs={12}>
-        <Typography variant="h5">Incident Details</Typography>
+        <Typography variant="h5">Reporting Sick</Typography>
+        <Typography variant="caption">Fill this in before you see the doctor</Typography>
         <Divider />
       </Grid>
       <Grid xs={12}>
-        <RadioGroup name="reportSickType" required={true} formLabel="You are going to:">
+        <RadioGroup row name="reportSickType" required={true} formLabel="You are going to:">
           {reportSickTypes.map((option) => (
             <FormControlLabel key={option} value={option} control={<Radio />} label={option} />
           ))}
@@ -129,6 +133,41 @@ function ReportSickTab() {
   );
 }
 
+function OutcomeTab() {
+  return (
+    <Grid container spacing={1}>
+      <Grid xs={12}>
+        <Typography variant="h5">Outcome</Typography>
+        <Typography variant="caption">Fill this in after you have seen the doctor</Typography>
+        <Divider />
+      </Grid>
+      <Grid xs={12}>
+        <RadioGroup
+          row
+          required
+          name="obtainMedication"
+          formLabel="Did you obtain any medications from the doctor?"
+        >
+          <FormControlLabel value={true} control={<Radio />} label="Yes" />
+          <FormControlLabel value={false} control={<Radio />} label="no" />
+        </RadioGroup>
+      </Grid>
+      <Grid xs={12}>
+        <RadioGroup
+          row
+          required
+          name="obtainMC"
+          formLabel="Did you obtain any MC or status from the doctor?"
+        >
+          <FormControlLabel value={true} control={<Radio />} label="Yes" />
+          <FormControlLabel value={false} control={<Radio />} label="no" />
+        </RadioGroup>
+      </Grid>
+      <Grid xs={12}></Grid>
+    </Grid>
+  );
+}
+
 function FormatGenerator() {
   const selectRankValues = [
     { value: "", label: "" },
@@ -161,6 +200,8 @@ function FormatGenerator() {
     location: "",
     dateTime: moment().tz("Asia/Singapore"),
     reason: "",
+    obtainMedication: false,
+    obtainMC: false,
   };
 
   return (
@@ -216,7 +257,9 @@ function FormatGenerator() {
             <TabPanel value="report-sick">
               <ReportSickTab />
             </TabPanel>
-            <TabPanel value="outcome"></TabPanel>
+            <TabPanel value="outcome">
+              <OutcomeTab />
+            </TabPanel>
           </TabContext>
         </Grid>
       </Grid>
