@@ -1,10 +1,19 @@
+import { TextField, TextFieldProps } from "@/components/formik-mui";
+import { DateTimePicker } from "@/components/formik-mui/DateTimePicker";
+import { RadioGroup } from "@/components/formik-mui/RadioGroup";
+import { TelInputField } from "@/components/formik-mui/TelInputField";
+import { armyRanks } from "@/constants";
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
+import { Button, Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import { useEffect, useState } from "react";
-import { FieldArray, Formik, useField, useFormikContext } from "formik";
-import { TextField, TextFieldProps } from "@/components/formik-mui";
+import { Box } from "@mui/system";
+import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { Formik, useField, useFormikContext } from "formik";
+import { Moment } from "moment";
+import moment from "moment-timezone";
+import { useEffect, useMemo, useState } from "react";
 import {
   checkContactNumber,
   checkLocation,
@@ -14,14 +23,6 @@ import {
   checkRank,
   checkReason,
 } from "./validations";
-import { armyRanks } from "@/constants";
-import { TelInputField } from "@/components/formik-mui/TelInputField";
-import { RadioGroup } from "@/components/formik-mui/RadioGroup";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DateTimePicker } from "@/components/formik-mui/DateTimePicker";
-import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { Moment } from "moment";
-import moment from "moment-timezone";
 
 const reportSickOptions = { RSI: "RSI", RSO: "RSO", MA: "MA" };
 
@@ -39,6 +40,7 @@ interface FormatGeneratorFieldsI {
   obtainMC: boolean;
   statuses: { status: string; days: number; startDate: Moment }[];
 }
+
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
 
 function ReportSickLocationField({
@@ -74,6 +76,66 @@ function ReportSickLocationField({
       }}
       {...props}
     />
+  );
+}
+
+function ReportSickTextArea() {
+  const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
+
+  const copyMessage = useMemo(() => {
+    return `
+Dear Sirs/Ma'am,
+
+*<< ${values.nric} / ${values.rank} ${values.name} / ${values.contactNumber} >>* from << *${
+      values.platform
+    }* >> is RSI at << *${values.location}* >> on << *${values.dateTime.format(
+      "DDMMYYYY HHmm"
+    )}* >> for << *${values.reason}* >>.
+
+For your update and information.
+`.trim();
+  }, [
+    values.nric,
+    values.rank,
+    values.name,
+    values.contactNumber,
+    values.platform,
+    values.location,
+    values.dateTime,
+    values.reason,
+  ]);
+
+  return (
+    <>
+      <Typography variant="h5" sx={{ my: 1 }}>
+        Output Message:{" "}
+      </Typography>
+      <Box sx={{ width: 1, mb: 1 }}>
+        <textarea
+          disabled
+          value={copyMessage}
+          style={{
+            width: "100%",
+            border: `2px solid #F9FAFB`,
+            flexGrow: 1,
+            boxSizing: "border-box",
+            borderRadius: 3,
+            backgroundColor: "#f8f8f8",
+            // font-size: 16px;
+            resize: "none",
+          }}
+          rows={5}
+        />
+      </Box>
+      <Button
+        disabled={!(Object.keys(errors).length === 0)}
+        onClick={() => {
+          navigator.clipboard.writeText(copyMessage);
+        }}
+      >
+        Copy
+      </Button>
+    </>
   );
 }
 
@@ -129,6 +191,9 @@ function ReportSickTab() {
           validate={checkReason}
         />
       </Grid>
+      <Grid xs={12}>
+        <ReportSickTextArea />
+      </Grid>
     </Grid>
   );
 }
@@ -166,26 +231,6 @@ function OutcomeTab() {
       <Grid xs={12}>{/* <FieldArray name=""></FieldArray> */}</Grid>
     </Grid>
   );
-}
-
-function PersistValues() {
-  const { values, setValues } = useFormikContext<FormatGeneratorFieldsI>();
-  const kk = "formatGenerator";
-
-  useEffect(() => {
-    let savedValues = window.localStorage.getItem(kk);
-    if (savedValues) {
-      savedValues = JSON.parse(savedValues);
-      setValues(savedValues);
-    }
-  }, []);
-
-  useEffect(() => {
-    const saveValues = JSON.stringify(values);
-    window.localStorage.setItem(kk, saveValues);
-  }, [values]);
-
-  return null;
 }
 
 function FormatGenerator() {
@@ -283,7 +328,6 @@ function FormatGenerator() {
             </TabPanel>
           </TabContext>
         </Grid>
-        <PersistValues />
       </Grid>
     </Formik>
   );
