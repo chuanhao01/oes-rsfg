@@ -13,7 +13,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Formik, useField, useFormikContext } from "formik";
 import { Moment } from "moment";
 import moment from "moment-timezone";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   checkContactNumber,
   checkLocation,
@@ -39,6 +39,8 @@ interface FormatGeneratorFieldsI {
   obtainMedication: boolean;
   obtainMC: boolean;
   statuses: { status: string; days: number; startDate: Moment }[];
+  swabTest: boolean;
+  swabTestResult: boolean;
 }
 
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
@@ -79,6 +81,7 @@ function ReportSickLocationField({
   );
 }
 
+// TODO: Need to add styling and erros from the other fields
 function ReportSickTextArea() {
   const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
 
@@ -198,6 +201,16 @@ function ReportSickTab() {
   );
 }
 
+function SwabTestResultRadioGroup({ children }: React.PropsWithChildren) {
+  const { values } = useFormikContext<FormatGeneratorFieldsI>();
+
+  if (!values.swabTest) {
+    return null;
+  }
+
+  return <>{children}</>;
+}
+
 function OutcomeTab() {
   return (
     <Grid container spacing={1}>
@@ -228,7 +241,26 @@ function OutcomeTab() {
           <FormControlLabel value={false} control={<Radio />} label="no" />
         </RadioGroup>
       </Grid>
-      <Grid xs={12}>{/* <FieldArray name=""></FieldArray> */}</Grid>
+      <Grid xs={12}>{/* For dynamic statuses to be added */}</Grid>
+      <Grid xs={12}>
+        <RadioGroup row required name="swabTest" formLabel="Did you go through a swab test?">
+          <FormControlLabel value={true} control={<Radio />} label="Yes" />
+          <FormControlLabel value={false} control={<Radio />} label="no" />
+        </RadioGroup>
+      </Grid>
+      <Grid xs={12}>
+        <SwabTestResultRadioGroup>
+          <RadioGroup
+            row
+            required
+            name="swabTestResult"
+            formLabel="What was the result of your swab test?"
+          >
+            <FormControlLabel value={true} control={<Radio />} label="Positive" />
+            <FormControlLabel value={false} control={<Radio />} label="Negative" />
+          </RadioGroup>
+        </SwabTestResultRadioGroup>
+      </Grid>
     </Grid>
   );
 }
@@ -268,6 +300,8 @@ function FormatGenerator() {
     obtainMedication: false,
     obtainMC: false,
     statuses: [],
+    swabTest: false,
+    swabTestResult: false,
   };
 
   return (
