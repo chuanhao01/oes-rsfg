@@ -1,8 +1,8 @@
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
+import { Button, Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Formik, useField, useFormikContext } from "formik";
 import { TextField, TextFieldProps } from "@/components/formik-mui";
 import {
@@ -21,7 +21,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DateTimePicker } from "@/components/formik-mui/DateTimePicker";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { Moment } from "moment";
+// import { Textarea } from "@mui/joy";
 import moment from "moment-timezone";
+import { Box } from "@mui/system";
 
 const reportSickOptions = { RSI: "RSI", RSO: "RSO", MA: "MA" };
 
@@ -36,6 +38,7 @@ interface FormatGeneratorFieldsI {
   dateTime: Moment;
   reason: string;
 }
+
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
 
 function ReportSickLocationField({
@@ -71,6 +74,66 @@ function ReportSickLocationField({
       }}
       {...props}
     />
+  );
+}
+
+function ReportSickTextArea() {
+  const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
+
+  const copyMessage = useMemo(() => {
+    return `
+Dear Sirs/Ma'am,
+
+*<< ${values.nric} / ${values.rank} ${values.name} / ${values.contactNumber} >>* from << *${
+      values.platform
+    }* >> is RSI at << *${values.location}* >> on << *${values.dateTime.format(
+      "DDMMYYYY HHmm"
+    )}* >> for << *${values.reason}* >>.
+
+For your update and information.
+`.trim();
+  }, [
+    values.nric,
+    values.rank,
+    values.name,
+    values.contactNumber,
+    values.platform,
+    values.location,
+    values.dateTime,
+    values.reason,
+  ]);
+
+  return (
+    <>
+      <Typography variant="h5" sx={{ my: 1 }}>
+        Output Message:{" "}
+      </Typography>
+      <Box sx={{ width: 1, mb: 1 }}>
+        <textarea
+          disabled
+          value={copyMessage}
+          style={{
+            width: "100%",
+            border: `2px solid #F9FAFB`,
+            flexGrow: 1,
+            boxSizing: "border-box",
+            borderRadius: 3,
+            backgroundColor: "#f8f8f8",
+            // font-size: 16px;
+            resize: "none",
+          }}
+          rows={5}
+        />
+      </Box>
+      <Button
+        disabled={!(Object.keys(errors).length === 0)}
+        onClick={() => {
+          navigator.clipboard.writeText(copyMessage);
+        }}
+      >
+        Copy
+      </Button>
+    </>
   );
 }
 
@@ -124,6 +187,9 @@ function ReportSickTab() {
           `.trim()}
           validate={checkReason}
         />
+      </Grid>
+      <Grid xs={12}>
+        <ReportSickTextArea />
       </Grid>
     </Grid>
   );
