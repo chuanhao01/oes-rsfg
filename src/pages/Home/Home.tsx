@@ -54,11 +54,11 @@ interface FormatGeneratorFieldsI {
   location: string;
   dateTime: Moment;
   reason: string;
-  obtainMedication: boolean;
-  obtainStatuses: boolean;
+  obtainMedication: "true" | "false";
+  obtainStatuses: "true" | "false";
   statuses: { status: string; days: string; startDate: Moment }[];
-  swabTest: boolean;
-  swabTestResult: boolean;
+  swabTest: "true" | "false";
+  swabTestResult: "true" | "false";
 }
 
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
@@ -224,7 +224,7 @@ function ReportSickTab() {
 function StatusesFieldArray() {
   const { values } = useFormikContext<FormatGeneratorFieldsI>();
 
-  if (!values.obtainStatuses) {
+  if (values.obtainStatuses === "false") {
     return null;
   }
 
@@ -296,7 +296,7 @@ function StatusesFieldArray() {
 function SwabTestResultRadioGroup({ children }: React.PropsWithChildren) {
   const { values } = useFormikContext<FormatGeneratorFieldsI>();
 
-  if (!values.swabTest) {
+  if (values.swabTest === "false") {
     return null;
   }
 
@@ -318,8 +318,8 @@ function OutcomeTab() {
           name="obtainMedication"
           formLabel="Did you obtain any medications from the doctor?"
         >
-          <FormControlLabel value={true} control={<Radio />} label="Yes" />
-          <FormControlLabel value={false} control={<Radio />} label="no" />
+          <FormControlLabel value="true" control={<Radio />} label="Yes" />
+          <FormControlLabel value="false" control={<Radio />} label="no" />
         </RadioGroup>
       </Grid>
       <Grid xs={12}>
@@ -329,8 +329,8 @@ function OutcomeTab() {
           name="obtainStatuses"
           formLabel="Did you obtain any MC or status from the doctor?"
         >
-          <FormControlLabel value={true} control={<Radio />} label="Yes" />
-          <FormControlLabel value={false} control={<Radio />} label="no" />
+          <FormControlLabel value="true" control={<Radio />} label="Yes" />
+          <FormControlLabel value="false" control={<Radio />} label="no" />
         </RadioGroup>
       </Grid>
       <Grid xs={12}>
@@ -338,8 +338,8 @@ function OutcomeTab() {
       </Grid>
       <Grid xs={12}>
         <RadioGroup row required name="swabTest" formLabel="Did you go through a swab test?">
-          <FormControlLabel value={true} control={<Radio />} label="Yes" />
-          <FormControlLabel value={false} control={<Radio />} label="no" />
+          <FormControlLabel value="true" control={<Radio />} label="Yes" />
+          <FormControlLabel value="false" control={<Radio />} label="no" />
         </RadioGroup>
       </Grid>
       <Grid xs={12}>
@@ -350,8 +350,8 @@ function OutcomeTab() {
             name="swabTestResult"
             formLabel="What was the result of your swab test?"
           >
-            <FormControlLabel value={true} control={<Radio />} label="Positive" />
-            <FormControlLabel value={false} control={<Radio />} label="Negative" />
+            <FormControlLabel value="true" control={<Radio />} label="Positive (+)" />
+            <FormControlLabel value="false" control={<Radio />} label="Negative (-)" />
           </RadioGroup>
         </SwabTestResultRadioGroup>
       </Grid>
@@ -391,11 +391,11 @@ function FormatGenerator() {
     location: "",
     dateTime: moment().tz("Asia/Singapore"),
     reason: "",
-    obtainMedication: false,
-    obtainStatuses: false,
+    obtainMedication: "false",
+    obtainStatuses: "false",
     statuses: [{ status: "", days: "", startDate: moment().tz("Asia/Singapore") }],
-    swabTest: false,
-    swabTestResult: false,
+    swabTest: "false",
+    swabTestResult: "false",
   };
 
   return (
