@@ -5,9 +5,17 @@ import { TelInputField } from "@/components/formik-mui/TelInputField";
 import { armyRanks } from "@/constants";
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Button, Divider, FormControlLabel, MenuItem, Radio, Tab, Typography } from "@mui/material";
+import {
+  TextField as MuiTextField,
+  Button,
+  Divider,
+  FormControlLabel,
+  MenuItem,
+  Radio,
+  Tab,
+  Typography,
+} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import { Box } from "@mui/system";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { Formik, useField, useFormikContext } from "formik";
@@ -81,9 +89,18 @@ function ReportSickLocationField({
   );
 }
 
-// TODO: Need to add styling and erros from the other fields
 function ReportSickTextArea() {
   const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
+  const filteredErrors = {
+    name: errors.name,
+    nric: errors.nric,
+    rank: errors.rank,
+    contactNumber: errors.contactNumber,
+    platform: errors.platform,
+    location: errors.location,
+    dateTime: errors.dateTime,
+    reason: errors.reason,
+  };
 
   const copyMessage = useMemo(() => {
     return `
@@ -107,31 +124,25 @@ For your update and information.
     values.dateTime,
     values.reason,
   ]);
+  const hasErrors = Object.values(filteredErrors).some((val) => Boolean(val));
 
   return (
     <>
       <Typography variant="h5" sx={{ my: 1 }}>
         Output Message:{" "}
       </Typography>
-      <Box sx={{ width: 1, mb: 1 }}>
-        <textarea
-          disabled
-          value={copyMessage}
-          style={{
-            width: "100%",
-            border: `2px solid #F9FAFB`,
-            flexGrow: 1,
-            boxSizing: "border-box",
-            borderRadius: 3,
-            backgroundColor: "#f8f8f8",
-            // font-size: 16px;
-            resize: "none",
-          }}
-          rows={5}
-        />
-      </Box>
+      <MuiTextField
+        disabled
+        multiline
+        value={copyMessage}
+        rows={5}
+        sx={{ width: 1, my: 1 }}
+        helperText={hasErrors && `You have filled up one of the above field incorrectly`}
+        error={hasErrors}
+      />
       <Button
-        disabled={!(Object.keys(errors).length === 0)}
+        variant="contained"
+        disabled={hasErrors}
         onClick={() => {
           navigator.clipboard.writeText(copyMessage);
         }}
