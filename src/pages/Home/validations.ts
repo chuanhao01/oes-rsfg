@@ -71,3 +71,9 @@ export const checkStatusDays: FieldValidator = (days: string) => {
     return "Please input an integer";
   }
 };
+
+export const checkMCNumber: FieldValidator = (mcNumber: string) => {
+  if (!mcNumber) {
+    return "Required";
+  }
+};

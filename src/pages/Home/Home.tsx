@@ -18,15 +18,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import {
-  FieldArray,
-  FieldArrayRenderProps,
-  Formik,
-  useField,
-  useFormik,
-  useFormikContext,
-} from "formik";
+import { FieldArray, Formik, useField, useFormikContext } from "formik";
 import { Moment } from "moment";
 import moment from "moment-timezone";
 import React, { useEffect, useMemo, useState } from "react";
@@ -34,6 +26,7 @@ import {
   checkContactNumber,
   checkLocation,
   checkMaskedNRIC,
+  checkMCNumber,
   checkName,
   checkPlatform,
   checkRank,
@@ -57,6 +50,7 @@ interface FormatGeneratorFieldsI {
   obtainMedication: "true" | "false";
   obtainStatuses: "true" | "false";
   statuses: { status: string; days: string; startDate: Moment }[];
+  mcNumber: string;
   swabTest: "true" | "false";
   swabTestResult: "true" | "false";
 }
@@ -285,6 +279,16 @@ function StatusesFieldArray() {
                   Add Additional Statuses
                 </Button>
               </Grid>
+              <Grid xs={12} sx={{ my: 2 }}>
+                <TextField
+                  required
+                  fullWidth
+                  name="mcNumber"
+                  label="MC Number"
+                  helperText={`Excuses have MC Numbers as well. If you did not get any MC or status, put "NIL".`}
+                  validate={checkMCNumber}
+                />
+              </Grid>
             </Grid>
           );
         }}
@@ -394,6 +398,7 @@ function FormatGenerator() {
     obtainMedication: "false",
     obtainStatuses: "false",
     statuses: [{ status: "", days: "", startDate: moment().tz("Asia/Singapore") }],
+    mcNumber: "",
     swabTest: "false",
     swabTestResult: "false",
   };
