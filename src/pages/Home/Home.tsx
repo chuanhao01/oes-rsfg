@@ -371,6 +371,22 @@ function OutcomeTextArea() {
     statuses: errors.statuses,
   };
 
+  const statusesMsg =
+    values.obtainStatuses === "true"
+      ? values.statuses
+          .map(
+            (status) =>
+              `${status.status} for ${status.days} days from ${status.startDate.format(
+                "DDMMYYYY"
+              )} to ${status.startDate.add(Number(status.days), "d").format("DDMMYYYY")}`
+          )
+          .join(", ")
+      : "NIL";
+  const swabTestMsg =
+    values.swabTest === "true"
+      ? `Yes (${values.swabTestResult === "true" ? "Positive (+)" : "Negative (-)"})`
+      : "No";
+
   const copyMessage = useMemo(() => {
     return `
 Dear Sirs/Ma'am,
@@ -380,6 +396,15 @@ Dear Sirs/Ma'am,
     }* >> is RSI at << *${values.location}* >> on << *${values.dateTime.format(
       "DDMMYYYY HHmm"
     )}* >> for << *${values.reason}* >>.
+
+*${values.rank} ${values.name}* has been prescribed with << *${
+      values.obtainMedication === "true" ? "Medication" : "NIL"
+    }* >> and given << *${statusesMsg}* >>.
+MC Number: ${values.mcNumber === "" ? "NIL" : values.mcNumber}
+Swab Test: ${swabTestMsg}
+Updated ESS: ${
+      values.updateESS === "true" ? "Yes" : values.updateESS === "false" ? "No" : values.updateESS
+    }
 
 For your update and information.
 `.trim();
@@ -392,7 +417,13 @@ For your update and information.
     values.location,
     values.dateTime,
     values.reason,
+    values.obtainMedication,
+    values.mcNumber,
+    values.updateESS,
+    statusesMsg,
+    swabTestMsg,
   ]);
+
   const hasErrors = Object.values(filteredErrors).some((val) => Boolean(val));
 
   return (
@@ -404,7 +435,7 @@ For your update and information.
         disabled
         multiline
         value={copyMessage}
-        rows={5}
+        rows={10}
         sx={{ width: 1, my: 1 }}
         helperText={hasErrors && `You have filled up one of the above fields incorrectly`}
         error={hasErrors}
@@ -477,7 +508,9 @@ function OutcomeTab() {
       <Grid xs={12}>
         <UpdateESSRadioGroup />
       </Grid>
-      <Grid xs={12}></Grid>
+      <Grid xs={12}>
+        <OutcomeTextArea />
+      </Grid>
     </Grid>
   );
 }
@@ -510,7 +543,7 @@ function FormatGenerator() {
     nric: "",
     contactNumber: "+65",
     platform: "",
-    reportSickType: reportSickOptions.RSI,
+    reportSickType: "RSI",
     location: "",
     dateTime: moment().tz("Asia/Singapore"),
     reason: "",
