@@ -38,6 +38,8 @@ import {
   checkPlatform,
   checkRank,
   checkReason,
+  checkStatus,
+  checkStatusDays,
 } from "./validations";
 
 const reportSickOptions = { RSI: "RSI", RSO: "RSO", MA: "MA" };
@@ -231,7 +233,7 @@ function StatusesFieldArray() {
       <Typography variant="h6">Statuses</Typography>
       <Typography variant="caption">Note that MC is considered a status.</Typography>
       <FieldArray name="statuses">
-        {({ push, remove, form }) => {
+        {({ push, remove }) => {
           return (
             <Grid container spacing={1}>
               {values.statuses.map((_, index) => (
@@ -245,6 +247,7 @@ function StatusesFieldArray() {
                       fullWidth
                       name={`statuses.${index}.status`}
                       label="Status"
+                      validate={checkStatus}
                     />
                   </Grid>
                   <Grid lg={2} xs={12}>
@@ -253,6 +256,7 @@ function StatusesFieldArray() {
                       fullWidth
                       name={`statuses.${index}.days`}
                       label="No. of days"
+                      validate={checkStatusDays}
                     />
                   </Grid>
                   <Grid lg={2} xs={12}>
@@ -265,12 +269,7 @@ function StatusesFieldArray() {
                     />
                   </Grid>
                   <Grid lg={2} xs={12}>
-                    <Button
-                      color="error"
-                      variant="outlined"
-                      sx={{ height: 1 }}
-                      onClick={() => remove(index)}
-                    >
+                    <Button color="error" variant="outlined" onClick={() => remove(index)}>
                       Remove Status
                     </Button>
                   </Grid>

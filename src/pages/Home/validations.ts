@@ -54,3 +54,20 @@ export const checkReason: FieldValidator = (reason: string) => {
     return "Required";
   }
 };
+
+export const checkStatus: FieldValidator = (status: string) => {
+  if (!status) {
+    return "Required";
+  }
+};
+
+export const checkStatusDays: FieldValidator = (days: string) => {
+  const integerRegex = /^\d+$/;
+
+  if (!days) {
+    return "Required";
+  }
+  if (!integerRegex.test(days)) {
+    return "Please input an integer";
+  }
+};
