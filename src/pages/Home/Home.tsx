@@ -1,4 +1,5 @@
 import { TextField, TextFieldProps } from "@/components/formik-mui";
+import { DatePicker } from "@/components/formik-mui/DatePicker";
 import { DateTimePicker } from "@/components/formik-mui/DateTimePicker";
 import { RadioGroup } from "@/components/formik-mui/RadioGroup";
 import { TelInputField } from "@/components/formik-mui/TelInputField";
@@ -18,7 +19,14 @@ import {
 import Grid from "@mui/material/Unstable_Grid2";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Formik, useField, useFormikContext } from "formik";
+import {
+  FieldArray,
+  FieldArrayRenderProps,
+  Formik,
+  useField,
+  useFormik,
+  useFormikContext,
+} from "formik";
 import { Moment } from "moment";
 import moment from "moment-timezone";
 import React, { useEffect, useMemo, useState } from "react";
@@ -45,8 +53,8 @@ interface FormatGeneratorFieldsI {
   dateTime: Moment;
   reason: string;
   obtainMedication: boolean;
-  obtainMC: boolean;
-  statuses: { status: string; days: number; startDate: Moment }[];
+  obtainStatuses: boolean;
+  statuses: { status: string; days: string; startDate: Moment }[];
   swabTest: boolean;
   swabTestResult: boolean;
 }
@@ -181,15 +189,14 @@ function ReportSickTab() {
         />
       </Grid>
       <Grid xs={12} lg={6}>
-        <LocalizationProvider dateAdapter={AdapterMoment}>
-          <DateTimePicker
-            label="Date and Time"
-            name="dateTime"
-            ampm={false}
-            inputProps={{ fullWidth: true }}
-            inputFormat="DD/MM/YYYY HH:mm"
-          />
-        </LocalizationProvider>
+        <DateTimePicker
+          label="Date and Time"
+          name="dateTime"
+          ampm={false}
+          inputProps={{ fullWidth: true }}
+          inputFormat="DD/MM/YYYY HH:mm"
+          dateAdapter={AdapterMoment}
+        />
       </Grid>
       <Grid xs={12}>
         <TextField
@@ -209,6 +216,81 @@ function ReportSickTab() {
         <ReportSickTextArea />
       </Grid>
     </Grid>
+  );
+}
+
+function StatusesFieldArray() {
+  const { values } = useFormikContext<FormatGeneratorFieldsI>();
+
+  if (!values.obtainStatuses) {
+    return null;
+  }
+
+  return (
+    <>
+      <Typography variant="h6">Statuses</Typography>
+      <Typography variant="caption">Note that MC is considered a status.</Typography>
+      <FieldArray name="statuses">
+        {({ push, remove, form }) => {
+          return (
+            <Grid container spacing={1}>
+              {values.statuses.map((_, index) => (
+                <Grid key={`statuses.${index}.status`} container xs={12} spacing={1}>
+                  <Grid xs={12}>
+                    <Typography variant="body1">Status {index + 1}:</Typography>
+                  </Grid>
+                  <Grid lg={6} xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name={`statuses.${index}.status`}
+                      label="Status"
+                    />
+                  </Grid>
+                  <Grid lg={2} xs={12}>
+                    <TextField
+                      required
+                      fullWidth
+                      name={`statuses.${index}.days`}
+                      label="No. of days"
+                    />
+                  </Grid>
+                  <Grid lg={2} xs={12}>
+                    <DatePicker
+                      label="Start Date"
+                      name={`statuses.${index}.startDate`}
+                      inputProps={{ fullWidth: true }}
+                      inputFormat="DD/MM/YYYY"
+                      dateAdapter={AdapterMoment}
+                    />
+                  </Grid>
+                  <Grid lg={2} xs={12}>
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      sx={{ height: 1 }}
+                      onClick={() => remove(index)}
+                    >
+                      Remove Status
+                    </Button>
+                  </Grid>
+                </Grid>
+              ))}
+              <Grid xs={12}>
+                <Button
+                  variant="outlined"
+                  onClick={() =>
+                    push({ status: "", days: "", startDate: moment().tz("Asia/Singapore") })
+                  }
+                >
+                  Add Additional Statuses
+                </Button>
+              </Grid>
+            </Grid>
+          );
+        }}
+      </FieldArray>
+    </>
   );
 }
 
@@ -245,14 +327,16 @@ function OutcomeTab() {
         <RadioGroup
           row
           required
-          name="obtainMC"
+          name="obtainStatuses"
           formLabel="Did you obtain any MC or status from the doctor?"
         >
           <FormControlLabel value={true} control={<Radio />} label="Yes" />
           <FormControlLabel value={false} control={<Radio />} label="no" />
         </RadioGroup>
       </Grid>
-      <Grid xs={12}>{/* For dynamic statuses to be added */}</Grid>
+      <Grid xs={12}>
+        <StatusesFieldArray />
+      </Grid>
       <Grid xs={12}>
         <RadioGroup row required name="swabTest" formLabel="Did you go through a swab test?">
           <FormControlLabel value={true} control={<Radio />} label="Yes" />
@@ -309,8 +393,8 @@ function FormatGenerator() {
     dateTime: moment().tz("Asia/Singapore"),
     reason: "",
     obtainMedication: false,
-    obtainMC: false,
-    statuses: [],
+    obtainStatuses: false,
+    statuses: [{ status: "", days: "", startDate: moment().tz("Asia/Singapore") }],
     swabTest: false,
     swabTestResult: false,
   };
