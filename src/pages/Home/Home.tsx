@@ -15,13 +15,16 @@ import {
   Radio,
   Tab,
   Typography,
+  Link,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
+import { Box } from "@mui/system";
 import { AdapterMoment } from "@mui/x-date-pickers/AdapterMoment";
 import { FieldArray, Formik, useField, useFormikContext } from "formik";
 import { Moment } from "moment";
 import moment from "moment-timezone";
 import React, { useEffect, useMemo, useState } from "react";
+import { Link as RouterLink } from "react-router-dom";
 import {
   checkContactNumber,
   checkLocation,
@@ -43,7 +46,7 @@ interface FormatGeneratorFieldsI {
   nric: string;
   contactNumber: string;
   platform: string;
-  reportSickType: string;
+  reportSickType: "RSI" | "RSO" | "MA";
   location: string;
   dateTime: Moment;
   reason: string;
@@ -53,6 +56,7 @@ interface FormatGeneratorFieldsI {
   mcNumber: string;
   swabTest: "true" | "false";
   swabTestResult: "true" | "false";
+  updateESS: "true" | "false" | "N/A";
 }
 
 type ReportSickLocationFieldProps = { defaultLocation?: string } & TextFieldProps;
@@ -307,6 +311,117 @@ function SwabTestResultRadioGroup({ children }: React.PropsWithChildren) {
   return <>{children}</>;
 }
 
+function UpdateESSRadioGroup() {
+  const { values } = useFormikContext<FormatGeneratorFieldsI>();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_, _1, helper] = useField("updateESS");
+
+  useEffect(() => {
+    if (values.reportSickType === reportSickOptions.RSI) {
+      helper.setValue("N/A");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values.reportSickType]);
+
+  if (values.reportSickType === reportSickOptions.RSI) {
+    return null;
+  }
+
+  return (
+    <>
+      <Box sx={{ width: 1 }}>
+        <RadioGroup row required formLabel="Did you update ESS?" name="updateESS">
+          <FormControlLabel value="true" control={<Radio />} label="Yes" />
+          <FormControlLabel value="false" control={<Radio />} label="No" />
+          <FormControlLabel value="N/A" control={<Radio />} label="N/A" />
+        </RadioGroup>
+      </Box>
+      <Typography variant="caption" sx={{ display: "block" }}>
+        You need to update ESS if you are given an MC when you RSO or go for MA.
+      </Typography>
+      <Typography variant="caption" sx={{ display: "block" }}>
+        To access/download ESS go{" "}
+        <Link
+          component={RouterLink}
+          to="https://play.google.com/store/apps/details?id=sg.mindef.emp.ess&hl=en_SG&gl=US"
+        >
+          here
+        </Link>
+        .
+      </Typography>
+    </>
+  );
+}
+
+function OutcomeTextArea() {
+  const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
+  const filteredErrors = {
+    name: errors.name,
+    nric: errors.nric,
+    rank: errors.rank,
+    contactNumber: errors.contactNumber,
+    platform: errors.platform,
+    location: errors.location,
+    dateTime: errors.dateTime,
+    reason: errors.reason,
+    obtainMedication: errors.obtainMedication,
+    obtainStatuses: errors.obtainStatuses,
+    swabTest: errors.swabTest,
+    swabTestResult: errors.swabTestResult,
+    statuses: errors.statuses,
+  };
+
+  const copyMessage = useMemo(() => {
+    return `
+Dear Sirs/Ma'am,
+
+*<< ${values.nric} / ${values.rank} ${values.name} / ${values.contactNumber} >>* from << *${
+      values.platform
+    }* >> is RSI at << *${values.location}* >> on << *${values.dateTime.format(
+      "DDMMYYYY HHmm"
+    )}* >> for << *${values.reason}* >>.
+
+For your update and information.
+`.trim();
+  }, [
+    values.nric,
+    values.rank,
+    values.name,
+    values.contactNumber,
+    values.platform,
+    values.location,
+    values.dateTime,
+    values.reason,
+  ]);
+  const hasErrors = Object.values(filteredErrors).some((val) => Boolean(val));
+
+  return (
+    <>
+      <Typography variant="h5" sx={{ my: 1 }}>
+        Output Message:{" "}
+      </Typography>
+      <MuiTextField
+        disabled
+        multiline
+        value={copyMessage}
+        rows={5}
+        sx={{ width: 1, my: 1 }}
+        helperText={hasErrors && `You have filled up one of the above fields incorrectly`}
+        error={hasErrors}
+      />
+      <Button
+        variant="contained"
+        disabled={hasErrors}
+        onClick={() => {
+          navigator.clipboard.writeText(copyMessage);
+        }}
+      >
+        Copy
+      </Button>
+    </>
+  );
+}
+
 function OutcomeTab() {
   return (
     <Grid container spacing={1}>
@@ -359,6 +474,10 @@ function OutcomeTab() {
           </RadioGroup>
         </SwabTestResultRadioGroup>
       </Grid>
+      <Grid xs={12}>
+        <UpdateESSRadioGroup />
+      </Grid>
+      <Grid xs={12}></Grid>
     </Grid>
   );
 }
@@ -401,6 +520,7 @@ function FormatGenerator() {
     mcNumber: "",
     swabTest: "false",
     swabTestResult: "false",
+    updateESS: "N/A",
   };
 
   return (
