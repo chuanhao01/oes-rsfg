@@ -57,6 +57,8 @@ jobs:
   # Deploy to gh pages
   deploy:
     name: Deploy
+    permissions:
+      contents: write
     # Deploy only for main branch
     if: github.ref == 'refs/heads/master'
     needs: build
