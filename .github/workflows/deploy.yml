@@ -47,6 +47,8 @@ jobs:
       # Build
       - name: BUILD
         run: npm run build
+        env:
+          VITE_CONFIG_BASE: "/oes-rsfg/"
 
       # Upload dist artifacts
       - uses: actions/upload-artifact@v2
