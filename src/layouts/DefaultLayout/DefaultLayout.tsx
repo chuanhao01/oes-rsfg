@@ -1,5 +1,4 @@
 import AppBar from "@mui/material/AppBar";
-import faviconUrl from "@/assets/favicon.png";
 import Grid from "@mui/material/Unstable_Grid2";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
@@ -13,9 +12,8 @@ import { Link as RouterLink } from "react-router-dom";
 
 import { ColorModeContext } from "@/App";
 import { useTheme } from "@mui/material/styles";
-import { Avatar } from "@mui/material";
 
-export declare interface DefaultLayoutProps {
+export interface DefaultLayoutProps {
   children?: React.ReactNode;
 }
 
@@ -29,9 +27,6 @@ export default function DefaultLayout({ children }: DefaultLayoutProps) {
         <Grid xs={12}>
           <AppBar position="static">
             <Toolbar>
-              <Link component={RouterLink} to="/">
-                <Avatar sx={{ mr: 1 }} alt="MES Icon" src={faviconUrl} variant="square" />
-              </Link>
               <Box sx={{ mr: "auto" }}>
                 <Link component={RouterLink} to="/" color="inherit" underline="none">
                   <Typography variant="h6" component="div">
