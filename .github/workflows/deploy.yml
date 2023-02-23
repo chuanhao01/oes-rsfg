@@ -18,6 +18,7 @@ on:
 
 env:
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  WEBSITE_BASE: "/oes-rsfg"
 
 jobs:
   # Build
@@ -49,7 +50,6 @@ jobs:
         run: npm run build
         # Where build is configured and defined
         env:
-          WEBSITE_BASE: "/oes-rsfg"
           VITE_CONFIG_BASE: "${{ env.WEBSITE_BASE }}/"
           ROUTER_BASE_NAME : "${{ env.WEBSITE_BASE }}"
 
