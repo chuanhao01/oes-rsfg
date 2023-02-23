@@ -1,3 +1,7 @@
+/**
+ * Boilerplate Code to load the React App on the webpage
+ */
+
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 

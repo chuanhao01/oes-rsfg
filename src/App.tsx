@@ -4,6 +4,7 @@ import Home from "@/pages/Home/Home";
 import { CssBaseline } from "@mui/material";
 import { useState, useMemo, createContext } from "react";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { ROUTER_BASE_NAME } from "@/config";
 
 export const ColorModeContext = createContext({
   toggleColorMode: () => {
@@ -32,7 +33,9 @@ export default function App() {
     [mode]
   );
 
-  const router = createBrowserRouter([{ path: "/", element: <Home /> }]);
+  const router = createBrowserRouter([{ path: "/", element: <Home /> }], {
+    basename: ROUTER_BASE_NAME,
+  });
 
   return (
     <ColorModeContext.Provider value={colorMode}>
