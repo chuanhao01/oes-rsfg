@@ -34,7 +34,7 @@ export default function App() {
   );
 
   const router = createBrowserRouter([{ path: "/", element: <Home /> }], {
-    basename: "/oes-rsfg/",
+    basename: ROUTER_BASE_NAME,
   });
 
   return (

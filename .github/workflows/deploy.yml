@@ -51,7 +51,7 @@ jobs:
         # Where build is configured and defined
         env:
           VITE_CONFIG_BASE: "${{ env.WEBSITE_BASE }}"
-          REACT_APP_ROUTER_BASE_NAME: "${{ env.WEBSITE_BASE }}"
+          REACT_ROUTER_BASE_NAME: "${{ env.WEBSITE_BASE }}"
 
       - uses: actions/upload-artifact@v2
         with:
