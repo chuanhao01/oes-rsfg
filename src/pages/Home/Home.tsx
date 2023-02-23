@@ -355,21 +355,20 @@ function UpdateESSRadioGroup() {
 
 function OutcomeTextArea() {
   const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
-  const filteredErrors = {
-    name: errors.name,
-    nric: errors.nric,
-    rank: errors.rank,
-    contactNumber: errors.contactNumber,
-    platform: errors.platform,
-    location: errors.location,
-    dateTime: errors.dateTime,
-    reason: errors.reason,
-    obtainMedication: errors.obtainMedication,
-    obtainStatuses: errors.obtainStatuses,
-    swabTest: errors.swabTest,
-    swabTestResult: errors.swabTestResult,
-    statuses: errors.statuses,
-  };
+
+  const isExistsError = [
+    errors.name,
+    errors.nric,
+    errors.rank,
+    errors.contactNumber,
+    errors.platform,
+    errors.location,
+    errors.dateTime,
+    errors.reason,
+  ].some((val) => Boolean(val));
+  const isStatusesError = values.obtainStatuses
+    ? Boolean(errors.statuses) || Boolean(errors.mcNumber)
+    : false;
 
   const statusesMsg =
     values.obtainStatuses === "true"
@@ -424,7 +423,7 @@ For your update and information.
     swabTestMsg,
   ]);
 
-  const hasErrors = Object.values(filteredErrors).some((val) => Boolean(val));
+  const hasErrors = isExistsError || isStatusesError;
 
   return (
     <>
