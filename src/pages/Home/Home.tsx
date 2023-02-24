@@ -7,15 +7,15 @@ import { armyRanks } from "@/constants";
 import DefaultLayout from "@/layouts/DefaultLayout/DefaultLayout";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import {
-  TextField as MuiTextField,
   Button,
   Divider,
   FormControlLabel,
+  Link,
   MenuItem,
   Radio,
   Tab,
+  TextField as MuiTextField,
   Typography,
-  Link,
 } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import { Box } from "@mui/system";
@@ -98,17 +98,7 @@ function ReportSickLocationField({
 }
 
 function ReportSickTextArea() {
-  const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
-  const filteredErrors = {
-    name: errors.name,
-    nric: errors.nric,
-    rank: errors.rank,
-    contactNumber: errors.contactNumber,
-    platform: errors.platform,
-    location: errors.location,
-    dateTime: errors.dateTime,
-    reason: errors.reason,
-  };
+  const { values } = useFormikContext<FormatGeneratorFieldsI>();
 
   const copyMessage = useMemo(() => {
     return `
@@ -132,27 +122,18 @@ For your update and information.
     values.dateTime,
     values.reason,
   ]);
-  const hasErrors = Object.values(filteredErrors).some((val) => Boolean(val));
 
   return (
     <>
       <Typography variant="h5" sx={{ my: 1 }}>
         Output Message:{" "}
       </Typography>
-      <MuiTextField
-        disabled
-        multiline
-        value={copyMessage}
-        rows={5}
-        sx={{ width: 1, my: 1 }}
-        helperText={hasErrors && `You have filled up one of the above field incorrectly`}
-        error={hasErrors}
-      />
+      <MuiTextField disabled multiline value={copyMessage} rows={5} sx={{ width: 1, my: 1 }} />
       <Button
         variant="contained"
-        disabled={hasErrors}
         onClick={() => {
           navigator.clipboard.writeText(copyMessage);
+          window.alert("Message is copied onto your clipboard.");
         }}
       >
         Copy
@@ -354,21 +335,7 @@ function UpdateESSRadioGroup() {
 }
 
 function OutcomeTextArea() {
-  const { values, errors } = useFormikContext<FormatGeneratorFieldsI>();
-
-  const isExistsError = [
-    errors.name,
-    errors.nric,
-    errors.rank,
-    errors.contactNumber,
-    errors.platform,
-    errors.location,
-    errors.dateTime,
-    errors.reason,
-  ].some((val) => Boolean(val));
-  const isStatusesError = values.obtainStatuses
-    ? Boolean(errors.statuses) || Boolean(errors.mcNumber)
-    : false;
+  const { values } = useFormikContext<FormatGeneratorFieldsI>();
 
   const statusesMsg =
     values.obtainStatuses === "true"
@@ -423,27 +390,17 @@ For your update and information.
     swabTestMsg,
   ]);
 
-  const hasErrors = isExistsError || isStatusesError;
-
   return (
     <>
       <Typography variant="h5" sx={{ my: 1 }}>
         Output Message:{" "}
       </Typography>
-      <MuiTextField
-        disabled
-        multiline
-        value={copyMessage}
-        rows={10}
-        sx={{ width: 1, my: 1 }}
-        helperText={hasErrors && `You have filled up one of the above fields incorrectly`}
-        error={hasErrors}
-      />
+      <MuiTextField disabled multiline value={copyMessage} rows={10} sx={{ width: 1, my: 1 }} />
       <Button
         variant="contained"
-        disabled={hasErrors}
         onClick={() => {
           navigator.clipboard.writeText(copyMessage);
+          window.alert("Message is copied onto your clipboard.");
         }}
       >
         Copy
