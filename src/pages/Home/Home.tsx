@@ -342,9 +342,12 @@ function OutcomeTextArea() {
       ? values.statuses
           .map(
             (status) =>
-              `${status.status} for ${status.days} days from ${status.startDate.format(
-                "DDMMYYYY"
-              )} to ${status.startDate.add(Number(status.days), "d").format("DDMMYYYY")}`
+              `${status.status} for ${status.days} days from ${status.startDate
+                .clone()
+                .format("DDMMYYYY")} to ${status.startDate
+                .clone()
+                .add(Number(status.days) - 1, "d")
+                .format("DDMMYYYY")}`
           )
           .join(", ")
       : "NIL";
